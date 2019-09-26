@@ -1,4 +1,9 @@
 const clockUtils = {
+  getFineMinutes(date) {
+    let minutes = date.getMinutes();
+    const seconds = date.getSeconds();
+    return minutes + seconds / 60;
+  },
   getTheta(deg) {
     return (deg / 360) * (2 * Math.PI);
   },

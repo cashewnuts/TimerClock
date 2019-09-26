@@ -8,3 +8,30 @@
   justify-content: center;
   align-items: center;
 }
+
+button.play-button,
+button.stop-button {
+  position: absolute;
+  background-color: white;
+  width: 4em;
+  height: 4em;
+  margin-top: 6em;
+  font-size: 100%;
+  font-family: inherit;
+  border-radius: 100%;
+  padding: 0;
+}
+
+button.play-button {
+  background-image: url(/resources/img/play.svg);
+}
+button.stop-button {
+  background-image: url(/resources/img/stop.svg);
+}
+
+/* Medium devices (landscape tablets, 768px and up) */
+@media (min-width: 768px) {
+  button.play-button {
+    margin-top: 10em;
+  }
+}
