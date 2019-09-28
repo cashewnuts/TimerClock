@@ -2,15 +2,27 @@ import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import TimerClock from './TimerClock';
 import ErrorBoundary from './utils/error-boundary';
+import NotificationUtils from './utils/notification-utils';
 
 import './styles.css';
 
-if ('Notification' in window) {
-  if (Notification.permission !== 'granted') {
-    Notification.requestPermission().then(function(permission) {
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker
+    .register('/sw.js')
+    .then(function() {
+      console.log('Service worker registered!');
+    })
+    .catch(function(err) {
+      console.log(err);
+    });
+}
+
+if (NotificationUtils.checkSupport()) {
+  if (!NotificationUtils.checkPermission()) {
+    NotificationUtils.requestPermission().then(function(permission) {
       // If the user accepts, let's create a notification
       if (permission === 'granted') {
-        var notification = new Notification('Notification Activated!');
+        NotificationUtils.showNotification('Notification Activated!');
       }
     });
   }

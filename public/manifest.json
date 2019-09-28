@@ -1,0 +1,41 @@
+{
+  "name": "HIIT Timer Clock",
+  "short_name": "HIIT Timer",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#fc1105",
+  "description": "Short period interval timer",
+  "icons": [
+    {
+      "src": "resources/icon/profile_avatar_96.png",
+      "sizes": "48x48",
+      "type": "image/png"
+    },
+    {
+      "src": "resources/icon/profile_avatar_96.png",
+      "sizes": "72x72",
+      "type": "image/png"
+    },
+    {
+      "src": "resources/icon/profile_avatar_96.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+      "src": "resources/icon/profile_avatar_160.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    },
+    {
+      "src": "resources/icon/profile_avatar_160.png",
+      "sizes": "168x168",
+      "type": "image/png"
+    },
+    {
+      "src": "resources/icon/profile_avatar_200.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ],
+  "related_applications": []
+}

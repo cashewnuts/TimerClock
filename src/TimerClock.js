@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import moment from 'moment';
 import ClockFrame from './ClockFrame';
 import ClockHands from './ClockHands';
+import NotificationUtils from './utils/notification-utils';
 
 export const viewport = {
   top: 0,
@@ -41,6 +42,9 @@ export default function TimerClock(props) {
   const [playCount, setPlayCount] = useState(0);
   const [plan, setPlan] = useState(null);
   const getReminder = (len => num => num % len)(PLAY_PLAN.length);
+  /**
+   * Manage initialization of timer
+   */
   useEffect(() => {
     if (props.playing) {
       const first = PLAY_PLAN[getReminder(playCount)];
@@ -59,12 +63,11 @@ export default function TimerClock(props) {
     }
   }, [props.playing]);
 
+  /**
+   * Manage timer transition
+   */
   useEffect(() => {
     if (now && plan && now.getTime() > plan.current.valueOf()) {
-      if ('Notification' in window) {
-        console.log('Notification');
-        new Notification('TIMER UPDATED!');
-      }
       const second = PLAY_PLAN[getReminder(playCount + 1)];
       setPlan({
         current: plan.next,
@@ -75,6 +78,21 @@ export default function TimerClock(props) {
       setPlayCount(nextPlayCount);
     }
   }, [now, plan]);
+
+  /**
+   * Manage Notification
+   */
+  useEffect(() => {
+    if (NotificationUtils.checkSupport()) {
+      if (!plan) return;
+      console.log('Notification');
+      if (plan.focus) {
+        NotificationUtils.showNotification('Get Focus!');
+      } else {
+        NotificationUtils.showNotification('Relax');
+      }
+    }
+  }, [plan]);
 
   return (
     <svg
