@@ -32,9 +32,11 @@ export default class ErrorBoundary extends React.Component {
           )}
           <div>
             {this.state.errorInfo &&
-              this.state.errorInfo.componentStack.split('\n').map(line => {
-                return <p>{line}</p>;
-              })}
+              this.state.errorInfo.componentStack
+                .split('\n')
+                .map((line, idx) => {
+                  return <p key={idx}>{line}</p>;
+                })}
           </div>
         </div>
       );

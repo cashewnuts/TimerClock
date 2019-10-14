@@ -23,7 +23,7 @@ export default function TimerGuage(props) {
           y: obj.y * times
         };
       };
-      const startMinutes = clockUtils.getFineMinutes(new Date());
+      const startMinutes = clockUtils.getFineMinutes(plan.start.toDate());
       const curStart = clockUtils.getXY(clockUtils.getTimeDeg60(startMinutes));
       setCurStart(multiplyXY(curStart, props.radius));
       const curMinutes = clockUtils.getFineMinutes(plan.current.toDate());

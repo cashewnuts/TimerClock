@@ -1,16 +1,21 @@
-import React, { useState } from 'react';
-import ReactDOM from 'react-dom';
-import TimerClock from './TimerClock';
-import ErrorBoundary from './utils/error-boundary';
-import NotificationUtils from './utils/notification-utils';
+import React, { useState, useEffect, useRef } from "react";
+import ReactDOM from "react-dom";
+import TimerClock from "./TimerClock";
+import ErrorBoundary from "./utils/error-boundary";
+import NotificationUtils from "./utils/notification-utils";
+import SwService from "./services/sw-service";
+import WorkerService from "./services/worker-service";
+import TimerTickerService from "./services/timer-ticker-service";
 
-import './styles.css';
+import "./styles.css";
 
-if ('serviceWorker' in navigator) {
+if ("serviceWorker" in navigator) {
   navigator.serviceWorker
-    .register('/sw.js')
+    .register("/sw.js")
     .then(function() {
-      console.log('Service worker registered!');
+      console.log("Service worker registered!");
+
+      SwService.postMessage("hello from index.js").then(console.log);
     })
     .catch(function(err) {
       console.log(err);
@@ -21,37 +26,50 @@ if (NotificationUtils.checkSupport()) {
   if (!NotificationUtils.checkPermission()) {
     NotificationUtils.requestPermission().then(function(permission) {
       // If the user accepts, let's create a notification
-      if (permission === 'granted') {
-        NotificationUtils.showNotification('Notification Activated!');
+      if (permission === "granted") {
+        NotificationUtils.showNotification("Notification Activated!");
       }
     });
   }
 }
 
+const worker = new WorkerService();
+
 function App() {
-  const [playing, setPlay] = useState(false);
+  const [plan, setPlan] = useState(null);
+  let timerTicker = useRef(null);
+  useEffect(() => {
+    timerTicker.current = new TimerTickerService(worker, {
+      setPlan
+    });
+    timerTicker.current.initialPostMessage();
+  }, []);
   return (
     <div className="App">
-      <h1>Hello CodeSandbox</h1>
-      <h2>Start editing to see some magic happen!</h2>
-      <div className="flex-center">
+      <div className="app-container flex-center">
         <div
           style={{
-            width: '70vw',
-            maxWidth: '50em',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center'
+            width: "70vw",
+            maxWidth: "50em",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center"
           }}
         >
           <ErrorBoundary>
-            {!playing && (
-              <button className="play-button" onClick={() => setPlay(true)} />
+            {!plan && (
+              <button
+                className="play-button"
+                onClick={() => timerTicker.current.startTimer()}
+              />
             )}
-            {playing && (
-              <button className="stop-button" onClick={() => setPlay(false)} />
+            {plan && (
+              <button
+                className="stop-button"
+                onClick={() => timerTicker.current.stopTimer()}
+              />
             )}
-            <TimerClock playing={playing} />
+            <TimerClock plan={plan} />
           </ErrorBoundary>
         </div>
       </div>
@@ -59,5 +77,5 @@ function App() {
   );
 }
 
-const rootElement = document.getElementById('root');
+const rootElement = document.getElementById("root");
 ReactDOM.render(<App />, rootElement);
