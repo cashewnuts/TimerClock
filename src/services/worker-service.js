@@ -3,15 +3,40 @@ export default class WorkerService {
     return ['iPhone', 'iPad', 'iPod'].includes(navigator.platform);
   }
   static checkSharedService() {
-    return !!SharedWorker;
+    return false;
   }
   constructor() {
+    this.isReady = false;
     if (WorkerService.checkSharedService()) {
-      const sWorker = new SharedWorker('shared-worker.js');
+      const sWorker = new SharedWorker('/shared-worker.js');
       console.log('SharedWorker.port.start()');
       this.worker = sWorker;
+      this.isReady = true;
     } else {
-      this.worker = new Worker('worker.js');
+      this.worker = new Worker('/worker.js');
+    }
+  }
+  ready() {
+    if (WorkerService.checkSharedService()) {
+      return Promise.resolve(true);
+    } else {
+      const timeoutchecker = Date.now();
+      this.addListener(e => {
+        if (e.data.action === 'ready') {
+          this.isReady = true;
+        }
+      });
+      return new Promise((resolve, reject) => {
+        const checkReady = () => {
+          if (this.isReady) {
+            return resolve(true);
+          } else if (Date.now() - timeoutchecker > 30000) {
+            reject('WebWorker setup timeout');
+          }
+          setTimeout(checkReady, 500);
+        };
+        checkReady();
+      });
     }
   }
   postMessage(msg) {

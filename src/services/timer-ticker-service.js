@@ -1,4 +1,4 @@
-import moment from "moment";
+import moment from 'moment';
 const PLAY_PLAN = [25, 5, 25, 5, 25, 5, 25, 20];
 
 export default class TimerTickerService {
@@ -7,33 +7,35 @@ export default class TimerTickerService {
     const { setPlan } = options || {};
     this.setPlan = setPlan;
     this.plan = null;
+  }
 
-    this.setupEventListeners();
+  waitReady() {
+    return this.worker.ready();
   }
 
   setupEventListeners() {
     this.worker.addListener(event => {
-      console.log("from sw", event.data);
+      console.log('from sw', event.data);
       const data = event.data;
       if (data.error) {
-        console.log("ERROR:", data.error);
+        console.log('ERROR:', data.error);
       }
-      if (data.action === "ret_timer_get_plan") {
+      if (data.action === 'ret_timer_get_plan') {
         const plan = data.payload;
         this.setSwPlan(plan);
-      } else if (data.action === "timer_start") {
+      } else if (data.action === 'timer_start') {
         const plan = data.payload;
         this.setSwPlan(plan);
-      } else if (data.action === "timer_stop") {
+      } else if (data.action === 'timer_stop') {
         const plan = data.payload;
         this.setSwPlan(plan);
-      } else if (data.action === "timer_update") {
+      } else if (data.action === 'timer_update') {
         const plan = data.payload;
         this.setSwPlan(plan);
         this.worker.postMessage({
-          action: "notification",
+          action: 'notification',
           payload: {
-            title: "Timer Update!",
+            title: 'Timer Update!',
             options: {}
           }
         });
@@ -43,13 +45,13 @@ export default class TimerTickerService {
 
   initialPostMessage() {
     this.worker.postMessage({
-      action: "timer_setup",
+      action: 'timer_setup',
       payload: {
         plan: PLAY_PLAN
       }
     });
     this.worker.postMessage({
-      action: "timer_get_plan",
+      action: 'timer_get_plan',
       payload: {
         playing: !!this.plan
       }
@@ -57,15 +59,15 @@ export default class TimerTickerService {
   }
 
   startTimer() {
-    console.log("startTimer");
+    console.log('startTimer');
     this.worker.postMessage({
-      action: "timer_start"
+      action: 'timer_start'
     });
   }
   stopTimer() {
-    console.log("startTimer");
+    console.log('startTimer');
     this.worker.postMessage({
-      action: "timer_stop"
+      action: 'timer_stop'
     });
   }
   setSwPlan(plan) {
